@@ -1,0 +1,28 @@
+{
+  "nodes": {
+    "upload_character#1": {
+      "rfNode": {
+        "position": {
+          "x": 0,
+          "y": 224.5
+        }
+      }
+    },
+    "upload_reference#1": {
+      "rfNode": {
+        "position": {
+          "x": 0,
+          "y": 508.5
+        }
+      }
+    },
+    "flow-1#1": {
+      "rfNode": {
+        "position": {
+          "x": 972,
+          "y": 102.25
+        }
+      }
+    }
+  }
+}

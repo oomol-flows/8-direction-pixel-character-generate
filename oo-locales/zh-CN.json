@@ -1,0 +1,8 @@
+{
+  "display-name": "像素角色生成器",
+  "description": "将角色图片转换为游戏就绪的像素艺术精灵图，包含8个视角，适用于游戏和动画制作。",
+  "array-of-edited-image-urls": "生成的精灵图图像路径数组",
+  "pixel-art-sprite-sheet-generator": "像素艺术精灵表生成器",
+  "convert-a-single-character-image-into-an-8-directional-pixel-art": "将单个角色图像转换为 8 方向像素艺术精灵表",
+  "upload-character-image": "上传角色图片"
+}

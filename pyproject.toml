@@ -1,0 +1,21 @@
+[project]
+name = "8-direction-pixel-character-generate"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "a1528zhang",email = "beingszhang@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "aiohttp (>=3.13.3,<4.0.0)"
+]
+
+[tool.poetry]
+package-mode = false
+packages = [{include = "8_direction_pixel_character_generate", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,190 @@
+title: Pixel Art Sprite Sheet Generator
+description: Transforms a character image into an 8-direction pixel art sprite
+  sheet. Accepts remote URLs for character and optional reference images,
+  outputs a sprite sheet with 8 viewing angles (Front, Front-Right, Right,
+  Back-Right, Back, Back-Left, Left, Front-Left) arranged in clockwise order.
+nodes:
+  - node_id: prompt_builder#1
+    title: Input & Prompt Builder
+    icon: ":carbon:text-creation:"
+    task:
+      inputs_def:
+        - handle: character_image_url
+          json_schema:
+            type: string
+            format: uri
+          description: Remote URL (http/https) to the character image. Must be a publicly
+            accessible URL, not a local file path.
+          nullable: false
+        - handle: reference_image_url
+          json_schema:
+            type: string
+            format: uri
+          description: Optional remote URL to a reference pixel art style image. Used to
+            guide the artistic style of the output.
+          nullable: true
+        - handle: user_prompt
+          json_schema:
+            type: string
+          description: Optional additional prompt text to customize the pixel art
+            generation. Appended to the default prompt.
+          nullable: true
+      outputs_def:
+        - handle: final_prompt
+          json_schema:
+            type: string
+          description: Complete prompt combining default pixel art instructions with
+            optional user additions.
+          nullable: false
+        - handle: image_urls
+          json_schema:
+            type: array
+            items:
+              type: string
+              minLength: 1
+            minItems: 1
+            maxItems: 14
+          description: Array of image URLs. Character image at index 0, optional reference
+            image at index 1.
+          nullable: false
+      executor:
+        name: python
+        options:
+          entry: scriptlets/+scriptlet#1.py
+    inputs_from:
+      - handle: character_image_url
+        from_flow:
+          - input_handle: remote_url
+        from_node:
+          []
+      - handle: reference_image_url
+        from_flow:
+          - input_handle: input
+        from_node:
+          []
+      - handle: user_prompt
+        value: null
+  - node_id: pixel_art_gen#1
+    title: Generate Pixel Art Character
+    icon: ":carbon:image:"
+    task: nano-banana-2::nano-banana2
+    inputs_from:
+      - handle: prompt
+        from_node:
+          - node_id: prompt_builder#1
+            output_handle: final_prompt
+      - handle: image_urls
+        from_node:
+          - node_id: prompt_builder#1
+            output_handle: image_urls
+      - handle: aspect_ratio
+        value: 1:1
+      - handle: resolution
+        value: 2K
+      - handle: output_format
+        value: png
+      - handle: num_images
+        value: 1
+      - handle: seed
+        value: null
+      - handle: safety_tolerance
+        value: "4"
+      - handle: limit_generations
+        value: true
+      - handle: enable_web_search
+        value: null
+  - node_id: url_converter#1
+    title: URL Format Converter
+    icon: ":carbon:convert:"
+    task:
+      inputs_def:
+        - handle: image_urls
+          json_schema:
+            type: array
+            items:
+              type: string
+          description: Array of image URLs from the pixel art generator. May be empty or
+            null.
+          nullable: true
+      outputs_def:
+        - handle: imageUrls
+          json_schema:
+            type: array
+            items:
+              type: string
+              format: uri
+            minItems: 1
+            maxItems: 3
+          description: Converted array of valid URIs for nano-banana-pro input. Filters
+            empty values.
+          nullable: true
+      executor:
+        name: python
+        options:
+          entry: scriptlets/+scriptlet#2.py
+    inputs_from:
+      - handle: image_urls
+        from_node:
+          - node_id: pixel_art_gen#1
+            output_handle: image_urls
+  - node_id: sprite_sheet_gen#1
+    title: Generate Sprite Sheet
+    icon: ":carbon:grid:"
+    subflow: nano_banana_pro::nano-banana-pro-image-generate
+    inputs_from:
+      - handle: prompt
+        value: "A high-quality 2D pixel art sprite sheet of one single character. The
+          output must be an 8-frame grid showing the character from 8 different
+          angles, arranged in a strict clockwise sequence from top-left to
+          bottom-right: (Row 1: Front, Front-Right, Right, Back-Right) and (Row
+          2: Back, Back-Left, Left, Front-Left). Maintain 100% character
+          consistency, identical color palette, and fixed pixel density across
+          all frames. Sharp pixel-perfect edges, no anti-aliasing. The
+          character's features and proportions must remain unchanged. No text,
+          no captions, no numbers, clean solid background."
+      - handle: imageUrls
+        from_node:
+          - node_id: url_converter#1
+            output_handle: imageUrls
+      - handle: aspectRatio
+        value: 16:9
+      - handle: resolution
+        value: 2K
+      - handle: outputFormat
+        value: png
+      - handle: numImages
+        value: 1
+      - handle: pollingInterval
+        value: 2
+      - handle: timeout
+        value: 300
+inputs_def:
+  - handle: remote_url
+    description: Remote URL to the character image. Must be a publicly accessible
+      http/https URL. Used as the primary source for pixel art conversion.
+    json_schema:
+      type: string
+      title: Presigned URL
+    executor_name: nodejs
+  - handle: input
+    description: Optional remote URL to a reference image for pixel art style
+      guidance. When provided, the output style will match the reference.
+    json_schema:
+      type: string
+      title: Presigned URL
+    executor_name: nodejs
+outputs_def:
+  - handle: images
+    json_schema:
+      type: array
+      items:
+        type: string
+        ui:widget: file
+    nullable: false
+    description: Array of generated sprite sheet image paths. Contains the final
+      8-direction pixel art sprite sheet.
+outputs_from:
+  - handle: images
+    from_node:
+      - node_id: sprite_sheet_gen#1
+        output_handle: images

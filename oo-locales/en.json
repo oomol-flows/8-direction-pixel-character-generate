@@ -1,0 +1,9 @@
+{
+  "display-name": "Pixel Character Generator",
+  "description": "Transform character images into game-ready pixel art sprite sheets with 8 viewing angles for games and animations.",
+  "array-of-edited-image-urls": "Array of generated sprite sheet image paths",
+  "pixel-art-sprite-sheet-generator": "Pixel Art Sprite Sheet Generator",
+  "convert-a-single-character-image-into-an-8-directional-pixel-art": "Convert a single character image into an 8-directional pixel art sprite sheet",
+  "upload-character-image": "Upload Character Image",
+  "upload-reference-image": "Upload Reference Image"
+}

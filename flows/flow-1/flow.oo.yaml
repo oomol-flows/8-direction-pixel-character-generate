@@ -1,0 +1,32 @@
+title: "%pixel-art-sprite-sheet-generator%"
+description: "%convert-a-single-character-image-into-an-8-directional-pixel-art%"
+nodes:
+  # Upload character image to cloud
+  - node_id: upload_character#1
+    title: "%upload-character-image%"
+    icon: ":carbon:cloud-upload:"
+    task: cloudflare-r2::upload-to-cloudflare
+    inputs_from:
+      - handle: file
+        value: "/oomol-driver/oomol-storage/xia.png"
+
+  # Upload reference image to cloud
+  - node_id: upload_reference#1
+    title: "%upload-reference-image%"
+    icon: ":carbon:cloud-upload:"
+    task: cloudflare-r2::upload-to-cloudflare
+    inputs_from:
+      - handle: file
+        value: "/oomol-driver/oomol-storage/3headchar.jpg"
+  - node_id: flow-1#1
+    title: "Pixel Art Sprite Sheet Generator #1"
+    inputs_from:
+      - handle: remote_url
+        from_node:
+          - node_id: upload_character#1
+            output_handle: remote_url
+      - handle: input
+        from_node:
+          - node_id: upload_reference#1
+            output_handle: remote_url
+    subflow: self::8-direction-pixel-character-generate

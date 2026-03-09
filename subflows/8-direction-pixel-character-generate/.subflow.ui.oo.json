@@ -1,0 +1,54 @@
+{
+  "nodes": {
+    "prompt_builder#1": {
+      "rfNode": {
+        "position": {
+          "x": 486,
+          "y": 0
+        }
+      }
+    },
+    "pixel_art_gen#1": {
+      "rfNode": {
+        "position": {
+          "x": 972,
+          "y": 204.5
+        }
+      }
+    },
+    "url_converter#1": {
+      "rfNode": {
+        "position": {
+          "x": 1458,
+          "y": 70.5
+        }
+      }
+    },
+    "sprite_sheet_gen#1": {
+      "rfNode": {
+        "position": {
+          "x": 1944,
+          "y": 145
+        }
+      }
+    }
+  },
+  "pseudoNodes": {
+    "input": {
+      "rfNode": {
+        "position": {
+          "x": 486,
+          "y": -500
+        }
+      }
+    },
+    "output": {
+      "rfNode": {
+        "position": {
+          "x": 2391.3050439255594,
+          "y": -141.8034243546566
+        }
+      }
+    }
+  }
+}
