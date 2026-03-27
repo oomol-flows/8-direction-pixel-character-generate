@@ -107,33 +107,29 @@ nodes:
     subflow: nano_banana_pro::nano-banana-pro-image-generate
     inputs_from:
       - handle: prompt
-        value: "Create a high-quality 2D pixel art sprite sheet based strictly on the
-          character from Image 1, preserving every specific visual detail,
-          accessory, and clothing pattern. The output must strictly follow the
-          circular clock-face layout and 8-directional perspectives shown in
-          Image 2. Arrange the character in 8 frames (Back, Back-Right, Right,
-          Front-Right, Front, Front-Left, Left, Back-Left) moving clockwise from
-          the top. Maintain 100% pixel-for-pixel character consistency,
-          identical color palette, and outfit details from Image 1. Ensure
-          absolute uniform scale and identical character size in every frame.
-          Sharp pixel-perfect edges, no anti-aliasing, no text, no labels. White
-          empty background.
-
-
-          The output image maintains a completely consistent size for
-          all characters and strictly consistent pixel precision."
+        value: "A high-quality 2D pixel art sprite sheet of one single character. The
+          output must be an 8-frame grid showing the character from 8 different
+          angles, arranged in a strict clockwise sequence from top-left to
+          bottom-right: (Row 1: Front, Front-Right, Right, Back-Right) and (Row
+          2: Back, Back-Left, Left, Front-Left). Maintain 100% character
+          consistency, identical color palette, and fixed pixel density across
+          all frames. Sharp pixel-perfect edges, no anti-aliasing. The
+          character's features and proportions must remain unchanged. No text,
+          no captions, no numbers, white empty background."
       - handle: imageUrls
         from_node:
           - node_id: url_converter#1
             output_handle: imageUrls
       - handle: aspectRatio
-        value: 1:1
+        value: 16:9
       - handle: resolution
         value: 2K
       - handle: outputFormat
         value: png
       - handle: numImages
         value: 1
+        from_flow:
+          - input_handle: numImages
       - handle: pollingInterval
         value: 2
       - handle: timeout
@@ -182,6 +178,14 @@ inputs_def:
       type: string
       title: Presigned URL
     executor_name: nodejs
+  - handle: numImages
+    json_schema:
+      type: integer
+      minimum: 1
+      maximum: 4
+    nullable: false
+    description: "%number-of-images-to-generate-1-to-8%"
+    value: 1
   - group: Optinal
   - handle: reference_image_url
     description: Optional remote URL to a reference image for pixel art style
@@ -193,12 +197,12 @@ inputs_def:
     nullable: true
     executor_name: nodejs
   - handle: user_prompt
-    json_schema:
-      type: string
-    nullable: true
     description: Optional additional prompt text to customize the pixel art
       generation. Appended to the default prompt.
+    json_schema:
+      type: string
     value:
+    nullable: true
     executor_name: python
 outputs_def:
   - handle: images

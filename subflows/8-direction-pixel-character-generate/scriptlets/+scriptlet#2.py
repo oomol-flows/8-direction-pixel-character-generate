@@ -17,8 +17,6 @@ async def main(params: Inputs, context: Context) -> Outputs:
     if not input_urls:
         return {"imageUrls": None}
     
-    # 添加8向图的参考图，以保证方向不出错
-    input_urls.append("https://static.oomol.com/community-banner/images/8d.png")
     # Limit to max 3 images as required by nano-banana-pro
     output_urls = input_urls[:3]
     

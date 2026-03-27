@@ -22,4 +22,6 @@ nodes:
           []
       - handle: user_prompt
         value:
+      - handle: numImages
+        value: 2
     subflow: self::8-direction-pixel-character-generate

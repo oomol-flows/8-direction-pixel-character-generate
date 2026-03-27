@@ -4,5 +4,6 @@
   "array-of-edited-image-urls": "生成的精灵图图像路径数组",
   "pixel-art-sprite-sheet-generator": "像素艺术精灵表生成器",
   "convert-a-single-character-image-into-an-8-directional-pixel-art": "将单个角色图像转换为 8 方向像素艺术精灵表",
-  "upload-character-image": "上传角色图片"
+  "upload-character-image": "上传角色图片",
+  "number-of-images-to-generate-1-to-8": "要生成的变体数量（1-8）"
 }

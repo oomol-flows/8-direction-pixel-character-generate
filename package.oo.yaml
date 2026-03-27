@@ -1,4 +1,4 @@
-version: 0.0.3
+version: 0.0.4
 scripts:
   bootstrap: |
     npm install
@@ -12,5 +12,5 @@ name: 8-direction-pixel-character-generate
 displayName: "%display-name%"
 description: "%description%"
 icon: ./icon.png
-releaseNotes: "fix: reference image optional"
+releaseNotes: "feat: add output image numbers"
 repository: https://github.com/oomol-flows/8-direction-pixel-character-generate.git

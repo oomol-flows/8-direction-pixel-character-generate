@@ -4,5 +4,6 @@
   "array-of-edited-image-urls": "Array of generated sprite sheet image paths",
   "pixel-art-sprite-sheet-generator": "Pixel Art Sprite Sheet Generator",
   "convert-a-single-character-image-into-an-8-directional-pixel-art": "Convert a single character image into an 8-directional pixel art sprite sheet",
-  "upload-character-image": "Upload Character Image"
+  "upload-character-image": "Upload Character Image",
+  "number-of-images-to-generate-1-to-8": "Number of variations to generate (1-8)"
 }
