@@ -1,0 +1,75 @@
+nodes:
+  - node_id: url_converter#1
+    title: URL Format Converter
+    icon: ":carbon:convert:"
+    inputs_from:
+      - handle: image_urls
+        value:
+          - https://oomol-file-cache.c3557946c7b4aaf936d1a1a78f8a1901.r2.cloudflarestorage.com/019343aa-c609-7498-b541-906f2860a1e2/edd6ba3f-80bc-45de-922b-1dd65f712e91.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=b1d34ce13ccd429bdc7bd934c43a8595%2F20260327%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260327T065724Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=61eba443a32bc92d596f6e0fee3748dff18f67fd57ee4569712dbdda480c2e75
+        from_node:
+          []
+    task:
+      inputs_def:
+        - handle: image_urls
+          description: Array of image URLs from the pixel art generator. May be empty or
+            null.
+          json_schema:
+            type: array
+            items:
+              type: string
+          nullable: true
+      outputs_def:
+        - handle: imageUrls
+          description: Converted array of valid URIs for nano-banana-pro input. Filters
+            empty values.
+          json_schema:
+            type: array
+            items:
+              type: string
+              format: uri
+            minItems: 1
+            maxItems: 3
+          nullable: true
+      executor:
+        name: python
+        options:
+          entry: scriptlets/+scriptlet#1.py
+          spawn: false
+  - node_id: sprite_sheet_gen#1
+    title: Generate Sprite Sheet
+    icon: ":carbon:grid:"
+    inputs_from:
+      - handle: prompt
+        value: Create a high-quality 2D pixel art sprite sheet based strictly on the
+          character from Image 1, preserving every specific visual detail,
+          accessory, and clothing pattern. The output must strictly follow the
+          circular clock-face layout and 8-directional perspectives shown in
+          Image 2. Arrange the character in 8 frames (Back, Back-Right, Right,
+          Front-Right, Front, Front-Left, Left, Back-Left) moving clockwise from
+          the top. Maintain 100% pixel-for-pixel character consistency,
+          identical color palette, and outfit details from Image 1. Ensure
+          absolute uniform scale and identical character size in every frame.
+          Sharp pixel-perfect edges, no anti-aliasing, no text, no labels. White
+          empty background.
+
+
+          Image 1 shows characters that retain all features and are
+          scaled proportionally. The output image maintains the exact same size
+          for all characters.
+      - handle: imageUrls
+        from_node:
+          - node_id: url_converter#1
+            output_handle: imageUrls
+      - handle: aspectRatio
+        value: 1:1
+      - handle: resolution
+        value: 4K
+      - handle: outputFormat
+        value: png
+      - handle: numImages
+        value: 1
+      - handle: pollingInterval
+        value: 2
+      - handle: timeout
+        value: 300
+    subflow: nano_banana_pro::nano-banana-pro-image-generate

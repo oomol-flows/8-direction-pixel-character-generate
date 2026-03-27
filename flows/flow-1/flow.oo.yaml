@@ -8,25 +8,18 @@ nodes:
     task: cloudflare-r2::upload-to-cloudflare
     inputs_from:
       - handle: file
-        value: "/oomol-driver/oomol-storage/xia.png"
-
-  # Upload reference image to cloud
-  - node_id: upload_reference#1
-    title: "%upload-reference-image%"
-    icon: ":carbon:cloud-upload:"
-    task: cloudflare-r2::upload-to-cloudflare
-    inputs_from:
-      - handle: file
-        value: "/oomol-driver/oomol-storage/3headchar.jpg"
+        value: /oomol-driver/oomol-storage/assets/thor.webp
   - node_id: flow-1#1
     title: "Pixel Art Sprite Sheet Generator #1"
     inputs_from:
-      - handle: remote_url
+      - handle: character_image_url
         from_node:
           - node_id: upload_character#1
             output_handle: remote_url
-      - handle: input
+      - handle: reference_image_url
+        value:
         from_node:
-          - node_id: upload_reference#1
-            output_handle: remote_url
+          []
+      - handle: user_prompt
+        value:
     subflow: self::8-direction-pixel-character-generate

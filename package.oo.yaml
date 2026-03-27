@@ -1,14 +1,16 @@
-version: 0.0.2
+version: 0.0.3
 scripts:
   bootstrap: |
     npm install
     poetry install --no-root
 dependencies:
-  nano-banana-2: 0.0.3
-  nano_banana_pro: 0.1.8
+  nano_banana_pro: 0.2.2
   upload-to-cloud: 0.0.5
   cloudflare-r2: 0.0.2
+  array: 0.1.9
 name: 8-direction-pixel-character-generate
 displayName: "%display-name%"
 description: "%description%"
 icon: ./icon.png
+releaseNotes: "fix: reference image optional"
+repository: https://github.com/oomol-flows/8-direction-pixel-character-generate.git

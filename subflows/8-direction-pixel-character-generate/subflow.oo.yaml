@@ -31,21 +31,22 @@ nodes:
           nullable: true
       outputs_def:
         - handle: final_prompt
-          json_schema:
-            type: string
           description: Complete prompt combining default pixel art instructions with
             optional user additions.
+          json_schema:
+            type: string
           nullable: false
         - handle: image_urls
+          description: Array of image URLs. Character image at index 0, optional reference
+            image at index 1.
           json_schema:
             type: array
             items:
               type: string
               minLength: 1
+              format: uri
             minItems: 1
-            maxItems: 14
-          description: Array of image URLs. Character image at index 0, optional reference
-            image at index 1.
+            maxItems: 3
           nullable: false
       executor:
         name: python
@@ -54,45 +55,18 @@ nodes:
     inputs_from:
       - handle: character_image_url
         from_flow:
-          - input_handle: remote_url
+          - input_handle: character_image_url
         from_node:
           []
       - handle: reference_image_url
         from_flow:
-          - input_handle: input
+          - input_handle: reference_image_url
         from_node:
           []
       - handle: user_prompt
         value: null
-  - node_id: pixel_art_gen#1
-    title: Generate Pixel Art Character
-    icon: ":carbon:image:"
-    task: nano-banana-2::nano-banana2
-    inputs_from:
-      - handle: prompt
-        from_node:
-          - node_id: prompt_builder#1
-            output_handle: final_prompt
-      - handle: image_urls
-        from_node:
-          - node_id: prompt_builder#1
-            output_handle: image_urls
-      - handle: aspect_ratio
-        value: 1:1
-      - handle: resolution
-        value: 2K
-      - handle: output_format
-        value: png
-      - handle: num_images
-        value: 1
-      - handle: seed
-        value: null
-      - handle: safety_tolerance
-        value: "4"
-      - handle: limit_generations
-        value: true
-      - handle: enable_web_search
-        value: null
+        from_flow:
+          - input_handle: user_prompt
   - node_id: url_converter#1
     title: URL Format Converter
     icon: ":carbon:convert:"
@@ -125,29 +99,35 @@ nodes:
     inputs_from:
       - handle: image_urls
         from_node:
-          - node_id: pixel_art_gen#1
-            output_handle: image_urls
+          - node_id: map#2
+            output_handle: array
   - node_id: sprite_sheet_gen#1
     title: Generate Sprite Sheet
     icon: ":carbon:grid:"
     subflow: nano_banana_pro::nano-banana-pro-image-generate
     inputs_from:
       - handle: prompt
-        value: "A high-quality 2D pixel art sprite sheet of one single character. The
-          output must be an 8-frame grid showing the character from 8 different
-          angles, arranged in a strict clockwise sequence from top-left to
-          bottom-right: (Row 1: Front, Front-Right, Right, Back-Right) and (Row
-          2: Back, Back-Left, Left, Front-Left). Maintain 100% character
-          consistency, identical color palette, and fixed pixel density across
-          all frames. Sharp pixel-perfect edges, no anti-aliasing. The
-          character's features and proportions must remain unchanged. No text,
-          no captions, no numbers, clean solid background."
+        value: "Create a high-quality 2D pixel art sprite sheet based strictly on the
+          character from Image 1, preserving every specific visual detail,
+          accessory, and clothing pattern. The output must strictly follow the
+          circular clock-face layout and 8-directional perspectives shown in
+          Image 2. Arrange the character in 8 frames (Back, Back-Right, Right,
+          Front-Right, Front, Front-Left, Left, Back-Left) moving clockwise from
+          the top. Maintain 100% pixel-for-pixel character consistency,
+          identical color palette, and outfit details from Image 1. Ensure
+          absolute uniform scale and identical character size in every frame.
+          Sharp pixel-perfect edges, no anti-aliasing, no text, no labels. White
+          empty background.
+
+
+          The output image maintains a completely consistent size for
+          all characters and strictly consistent pixel precision."
       - handle: imageUrls
         from_node:
           - node_id: url_converter#1
             output_handle: imageUrls
       - handle: aspectRatio
-        value: 16:9
+        value: 1:1
       - handle: resolution
         value: 2K
       - handle: outputFormat
@@ -158,21 +138,68 @@ nodes:
         value: 2
       - handle: timeout
         value: 300
+  - node_id: map#2
+    title: "Map #2"
+    inputs_from:
+      - handle: array
+        from_node:
+          - node_id: nano-banana-pro-image-generate#1
+            output_handle: images
+    subflow: array::map
+    slots:
+      - slot_node_id: +slot#2
+        slotflow: self::+slotflow#1
+  - node_id: nano-banana-pro-image-generate#1
+    title: "Nano Banana Pro Image Generator #1"
+    inputs_from:
+      - handle: prompt
+        from_node:
+          - node_id: prompt_builder#1
+            output_handle: final_prompt
+      - handle: imageUrls
+        value: null
+        from_node:
+          - node_id: prompt_builder#1
+            output_handle: image_urls
+      - handle: aspectRatio
+        value: 1:1
+      - handle: outputFormat
+        value: png
+      - handle: resolution
+        value: 1K
+      - handle: numImages
+        value: 1
+      - handle: pollingInterval
+        value: 2
+      - handle: timeout
+        value: 300
+    subflow: nano_banana_pro::nano-banana-pro-image-generate
 inputs_def:
-  - handle: remote_url
+  - handle: character_image_url
     description: Remote URL to the character image. Must be a publicly accessible
       http/https URL. Used as the primary source for pixel art conversion.
     json_schema:
       type: string
       title: Presigned URL
     executor_name: nodejs
-  - handle: input
+  - group: Optinal
+  - handle: reference_image_url
     description: Optional remote URL to a reference image for pixel art style
       guidance. When provided, the output style will match the reference.
     json_schema:
       type: string
       title: Presigned URL
+    value:
+    nullable: true
     executor_name: nodejs
+  - handle: user_prompt
+    json_schema:
+      type: string
+    nullable: true
+    description: Optional additional prompt text to customize the pixel art
+      generation. Appended to the default prompt.
+    value:
+    executor_name: python
 outputs_def:
   - handle: images
     json_schema:

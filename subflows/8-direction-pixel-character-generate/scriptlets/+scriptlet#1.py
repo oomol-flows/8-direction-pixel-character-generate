@@ -46,10 +46,11 @@ async def main(params: Inputs, context: Context) -> Outputs:
     image_urls = [params["character_image_url"]]
     
     # Reference image is optional, but if provided must be a remote URL
-    if params.get("reference_image_url"):
-        if not is_remote_url(params["reference_image_url"]):
+    refrence_url = params.get("reference_image_url")
+    if refrence_url:
+        if not is_remote_url(refrence_url):
             raise ValueError(f"reference_image_url must be a remote URL (http/https), got: {params['reference_image_url']}")
-        image_urls.append(params["reference_image_url"])
+        image_urls.append(refrence_url)
     
     return {
         "final_prompt": final_prompt,
